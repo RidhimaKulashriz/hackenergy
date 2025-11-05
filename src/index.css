@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  /* Galaxy Theme (Default) */
+  :root {
+    /* Deep space background */
+    --background: 230 35% 7%;
+    --foreground: 210 40% 98%;
+
+    /* Glass card effect */
+    --card: 230 35% 12%;
+    --card-foreground: 210 40% 98%;
+    --card-glass: 230 35% 12% / 0.4;
+
+    --popover: 230 35% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Electric blue primary */
+    --primary: 199 89% 48%;
+    --primary-glow: 199 89% 58%;
+    --primary-foreground: 210 40% 98%;
+
+    /* Purple secondary */
+    --secondary: 270 60% 50%;
+    --secondary-glow: 270 60% 60%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Muted states */
+    --muted: 230 35% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Neon cyan accent */
+    --accent: 187 85% 53%;
+    --accent-glow: 187 85% 63%;
+    --accent-foreground: 230 35% 7%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 230 35% 7%;
+
+    /* Borders & inputs */
+    --border: 230 35% 20%;
+    --border-glass: 230 35% 30% / 0.3;
+    --input: 230 35% 18%;
+    --ring: 199 89% 48%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(199 89% 48%), hsl(270 60% 50%));
+    --gradient-accent: linear-gradient(135deg, hsl(187 85% 53%), hsl(199 89% 48%));
+    --gradient-hero: linear-gradient(180deg, hsl(230 35% 7%), hsl(230 35% 10%));
+
+    /* Shadows */
+    --shadow-glow: 0 0 20px hsl(199 89% 48% / 0.3);
+    --shadow-glow-lg: 0 0 40px hsl(199 89% 48% / 0.4);
+    --shadow-accent: 0 0 20px hsl(187 85% 53% / 0.3);
+
+    /* Animation timings */
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 350ms;
+
+    --radius: 0.75rem;
+  }
+
+  /* Sun Theme (Light) */
+  [data-theme='sun'] {
+    --background: 45 100% 98%;
+    --foreground: 25 30% 15%;
+
+    --card: 40 50% 96%;
+    --card-foreground: 25 30% 15%;
+    --card-glass: 40 50% 96% / 0.6;
+
+    --popover: 40 50% 97%;
+    --popover-foreground: 25 30% 15%;
+
+    /* Warm orange primary */
+    --primary: 25 95% 53%;
+    --primary-glow: 25 95% 63%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Golden secondary */
+    --secondary: 45 90% 55%;
+    --secondary-glow: 45 90% 65%;
+    --secondary-foreground: 25 30% 15%;
+
+    --muted: 40 30% 92%;
+    --muted-foreground: 25 20% 40%;
+
+    /* Bright amber accent */
+    --accent: 35 100% 60%;
+    --accent-glow: 35 100% 70%;
+    --accent-foreground: 25 30% 15%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 25 30% 15%;
+
+    --border: 40 30% 85%;
+    --border-glass: 40 30% 75% / 0.3;
+    --input: 40 30% 94%;
+    --ring: 25 95% 53%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%), hsl(45 90% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(35 100% 60%), hsl(25 95% 53%));
+    --gradient-hero: linear-gradient(180deg, hsl(45 100% 98%), hsl(40 80% 95%));
+
+    --shadow-glow: 0 0 20px hsl(25 95% 53% / 0.3);
+    --shadow-glow-lg: 0 0 40px hsl(25 95% 53% / 0.4);
+    --shadow-accent: 0 0 20px hsl(35 100% 60% / 0.3);
+  }
+
+  /* Font Size Variants */
+  [data-font-size='small'] {
+    font-size: 14px;
+  }
+
+  [data-font-size='large'] {
+    font-size: 18px;
+  }
+
+  /* Reduced Motion */
+  [data-reduce-motion='true'] *,
+  [data-reduce-motion='true'] *::before,
+  [data-reduce-motion='true'] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Glass effect utility */
+  .glass {
+    background: hsl(var(--card-glass));
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border-glass));
+  }
+
+  .glass-hover {
+    @apply glass transition-all duration-300;
+  }
+
+  .glass-hover:hover {
+    background: hsl(var(--card));
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+
+  /* Focus visible styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Skip to main content link for accessibility */
+  .skip-link {
+    @apply absolute left-4 top-4 z-50 rounded-md bg-primary px-4 py-2 text-primary-foreground;
+    @apply -translate-y-20 opacity-0 transition-all focus:translate-y-0 focus:opacity-100;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Custom cursors */
+  [data-theme='galaxy'] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%2300BFFF' d='M12 2l2.4 7.4h7.6l-6 4.6 2.3 7-6.3-4.6-6.3 4.6 2.3-7-6-4.6h7.6z'/%3E%3C/svg%3E"), auto;
+  }
+
+  [data-theme='sun'] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5' fill='%23FF8C00'/%3E%3Cpath fill='%23FFD700' d='M12 1v4m0 14v4m11-11h-4M5 12H1m17.66-7.66l-2.83 2.83m-9.66 9.66l-2.83 2.83m12.49 0l-2.83-2.83M7.17 7.17L4.34 4.34'/%3E%3C/svg%3E"), auto;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

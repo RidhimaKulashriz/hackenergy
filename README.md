@@ -55,7 +55,8 @@ A modern web application for energy management and monitoring built with React, 
    npm run dev
    ```
 
-5. Open [http://localhost:5173](http://localhost:5173) in your browser.
+5. Open [https://hackenergy1.vercel.app](https://hackenergy1.vercel.app) in your browser to view the deployed application.
+   - Or open [http://localhost:5173](http://localhost:5173) for local development
 
 ## Build
 

@@ -1,19 +1,20 @@
 # HackEnergy - Energy Management Platform
 
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/RidhimaKulashriz/hackenergy)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRidhimaKulashriz%2Fhackenergy)
 
 A modern web application for energy management and monitoring built with React, TypeScript, and Vite.
 
-## 🚀 Features
+## Features
 
-- 🔐 Secure authentication system
-- 📊 Energy usage dashboard
-- 📱 Responsive design
-- ⚡ Real-time data visualization
-- 🔄 Modern React with TypeScript
-- 🎨 Styled with Tailwind CSS
+- Secure authentication system
+- Energy usage dashboard
+- Responsive design
+- Real-time data visualization
+- Modern React with TypeScript
+- Styled with Tailwind CSS
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: React 18, TypeScript, Vite
 - **Styling**: Tailwind CSS, Radix UI
@@ -23,7 +24,7 @@ A modern web application for energy management and monitoring built with React, 
 - **UI Components**: Radix UI Primitives
 - **Build Tool**: Vite
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -56,7 +57,7 @@ A modern web application for energy management and monitoring built with React, 
 
 5. Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-## 📦 Build
+## Build
 
 To create a production build:
 
@@ -64,7 +65,7 @@ To create a production build:
 npm run build
 ```
 
-## 🧪 Testing
+## Testing
 
 Run the test suite:
 
@@ -72,15 +73,15 @@ Run the test suite:
 npm test
 ```
 
-## 🚀 Deployment
+## Deployment
 
 This project is configured for deployment on Vercel. Push your changes to the `main` branch to trigger automatic deployments.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Vite](https://vitejs.dev/)
 - [React](https://reactjs.org/)
@@ -90,4 +91,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by RIDHIMA AND HITAKSHI

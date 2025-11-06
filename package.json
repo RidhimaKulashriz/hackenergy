@@ -8,11 +8,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "vercel-build": "npx vite build",
-    "start": "vite preview --port 3000"
+    "vercel-build": "vite build",
+    "start": "vite preview --port 3000",
+    "postinstall": "chmod +x node_modules/.bin/*"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

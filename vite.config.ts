@@ -5,24 +5,32 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
+  const isProduction = mode === 'production';
   
   return {
-    // This ensures that the app works when served from a subdirectory
-    base: env.VITE_APP_BASE_URL || '/',
+    // For production, use VITE_APP_BASE_URL or fallback to root
+    // For development, always use root
+    base: isProduction ? (env.VITE_APP_BASE_URL || '/') : '/',
     
     server: {
       host: "::",
       port: 3000,
       strictPort: true,
-      // Enable CORS in development
       cors: true,
     },
     
     preview: {
       port: 3000,
       strictPort: true,
+      cors: true,
+    },
+    
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
+      sourcemap: !isProduction,
+      emptyOutDir: true,
     },
     
     plugins: [react()],

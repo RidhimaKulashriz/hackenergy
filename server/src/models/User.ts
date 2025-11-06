@@ -45,23 +45,25 @@ const userSchema = new mongoose.Schema(
 );
 
 // Encrypt password using bcrypt
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (this: mongoose.Document & IUser, next) {
   if (!this.isModified('password')) {
-    next();
+    return next();
   }
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 // Match user entered password to hashed password in database
-userSchema.methods.matchPassword = async function (enteredPassword: string) {
+userSchema.methods.matchPassword = async function (this: IUser, enteredPassword: string): Promise<boolean> {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 // Set first registered user as admin if no admin exists
-userSchema.pre('save', async function (next) {
-  const userCount = await this.constructor.countDocuments();
+userSchema.pre('save', async function (this: mongoose.Document & IUser, next) {
+  const user = this.constructor as any;
+  const userCount = await user.countDocuments();
   if (userCount === 0) {
     this.role = 'admin';
   }

@@ -1,23 +1,46 @@
-import mongoose, { Document, Types, Schema, Model, Query } from 'mongoose';
+import mongoose, { Document, Types, Schema, Model, Query, HydratedDocument, ObjectId } from 'mongoose';
 import { IUser } from './User';
 import { IProject } from './Project';
 
-export interface IComment extends Document {
-  user: Types.ObjectId | IUser;
+type UserRef = Types.ObjectId | IUser | string;
+
+// Base interface for Comment document
+export interface ICommentBase {
+  user: UserRef;
   text: string;
   name?: string;
   avatar?: string;
   date: Date;
 }
 
-export interface IPost extends Document {
+declare global {
+  namespace Models {
+    const User: Model<IUser>;
+    const Project: Model<IProject>;
+  }
+}
+
+// Helper type to safely extract ID from user reference
+type ExtractId<T> = T extends { _id: any } ? T['_id'] : T extends ObjectId ? T : string;
+
+// Base interface for Post document
+export interface IPostBase {
   content: string;
   user: Types.ObjectId | IUser;
   project: Types.ObjectId | IProject;
   likes: Types.Array<Types.ObjectId>;
-  comments: IComment[];
+  comments: ICommentBase[];
   createdAt: Date;
   updatedAt: Date;
+  name?: string;
+  avatar?: string;
+}
+
+// Mongoose document with methods
+export interface IComment extends ICommentBase, Document {}
+
+// Full Post interface with methods
+export interface IPost extends IPostBase, Document {
   updateCommentUserInfo: (userId: string, updateData: { name?: string; avatar?: string }) => Promise<void>;
 }
 
@@ -86,46 +109,61 @@ postSchema.index({ user: 1, project: 1, createdAt: -1 });
 
 // Populate user and project when finding posts
 postSchema.pre<Query<IPost[], IPost>>(/^find/, function(next) {
-  this.populate({
-    path: 'user',
-    select: 'name avatar'
-  }).populate({
-    path: 'project',
-    select: 'title'
-  });
+  (this as Query<IPost[], IPost>)
+    .populate({
+      path: 'user',
+      select: 'name avatar'
+    })
+    .populate({
+      path: 'project',
+      select: 'title'
+    });
   next();
 });
 
 // Update comment user info when a user updates their profile
 postSchema.methods.updateCommentUserInfo = async function(
+  this: HydratedDocument<IPost>,
   userId: string, 
   updateData: { name?: string; avatar?: string }
 ): Promise<void> {
-  const comments = this.comments as IComment[];
-  
-  for (let i = 0; i < comments.length; i++) {
-    const comment = comments[i];
-    const commentUser = comment.user as IUser;
+  // Create a new array to avoid direct mutation
+  const updatedComments = this.comments.map(comment => {
+    const commentUser = comment.user;
     
-    // Handle both populated and non-populated user
-    const commentUserId = typeof commentUser === 'object' && commentUser !== null && '_id' in commentUser
-      ? (commentUser as any)._id?.toString()
-      : commentUser?.toString();
+    // Helper function to extract ID from user reference
+    const getUserId = (user: UserRef): string | null => {
+      if (!user) return null;
+      if (user instanceof Types.ObjectId) return user.toString();
+      if (typeof user === 'string') return user;
+      return user._id?.toString() || null;
+    };
+    
+    const commentUserId = getUserId(commentUser);
     
     if (commentUserId === userId) {
-      const updatedComment = {
-        ...comment.toObject(),
-        name: updateData.name || (comment as any).name,
-        avatar: updateData.avatar || (comment as any).avatar
-      };
+      // Create a new comment object with updated fields
+      const commentDoc = comment as unknown as Document & ICommentBase;
+      const commentData = typeof commentDoc.toObject === 'function' 
+        ? commentDoc.toObject() 
+        : { ...comment };
       
-      this.comments.set(i, updatedComment);
+      return {
+        ...commentData,
+        name: updateData.name ?? commentData.name,
+        avatar: updateData.avatar ?? commentData.avatar
+      } as unknown as IComment;
     }
-  }
+    
+    return comment;
+  });
   
+  // Use $set to update the comments array
+  this.set('comments', updatedComments);
   await this.save();
 };
 
-const Post = mongoose.model<IPost, IPostModel>('Post', postSchema);
+// Create the model with simplified type parameters
+const Post = mongoose.model<IPost>('Post', postSchema) as IPostModel;
 
 export default Post;

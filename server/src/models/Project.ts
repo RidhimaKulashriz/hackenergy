@@ -1,5 +1,11 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Schema, Model } from 'mongoose';
 import { IUser } from './User';
+
+declare global {
+  namespace Models {
+    const Post: Model<IPost>;
+  }
+}
 
 export interface IProject extends Document {
   title: string;
@@ -67,8 +73,8 @@ const projectSchema = new mongoose.Schema(
 projectSchema.index({ title: 'text', description: 'text' });
 
 // Cascade delete posts when a project is deleted
-projectSchema.pre('remove', async function (next) {
-  await this.model('Post').deleteMany({ project: this._id });
+projectSchema.pre('remove', async function (this: IProject & Document, next) {
+  await mongoose.model('Post').deleteMany({ project: this._id });
   next();
 });
 

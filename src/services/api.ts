@@ -38,24 +38,36 @@ class ApiService {
 
   // Auth endpoints
   async signUp(email: string, password: string, name: string): Promise<ApiResponse<{ user: User; token: string }>> {
-    // TODO: Replace with actual API call
-    // const response = await this.client.post("/auth/signup", { email, password, name });
-    // return response.data;
-    throw new Error("Backend not connected - implement auth signup endpoint");
+    try {
+      const response = await this.client.post("/auth/register", { email, password, name });
+      localStorage.setItem("auth_token", response.data.token);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Signup failed. Please try again.');
+    }
   }
 
   async signIn(email: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> {
-    // TODO: Replace with actual API call
-    // const response = await this.client.post("/auth/login", { email, password });
-    // return response.data;
-    throw new Error("Backend not connected - implement auth login endpoint");
+    try {
+      const response = await this.client.post("/auth/login", { email, password });
+      localStorage.setItem("auth_token", response.data.token);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Invalid email or password');
+    }
   }
 
   async getMe(): Promise<ApiResponse<User>> {
-    // TODO: Replace with actual API call
-    // const response = await this.client.get("/auth/me");
-    // return response.data;
-    throw new Error("Backend not connected - implement auth me endpoint");
+    try {
+      const response = await this.client.get("/auth/me");
+      return response.data;
+    } catch (error: any) {
+      // If token is invalid or expired, clear it
+      if (error.response?.status === 401) {
+        localStorage.removeItem("auth_token");
+      }
+      throw error;
+    }
   }
 
   // Events endpoints

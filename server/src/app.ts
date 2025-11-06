@@ -2,18 +2,21 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
-import rateLimit from 'express-rate-limit';
 import hpp from 'hpp';
 import xss from 'xss-clean';
+import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
-import { FRONTEND_URL, NODE_ENV } from './config/constants';
+import swaggerUi from 'swagger-ui-express';
+import { config } from 'dotenv';
+import { connectDB } from './config/db';
 import { errorHandler } from './middleware/error';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import projectRoutes from './routes/projects';
 import postRoutes from './routes/posts';
 import adminRoutes from './routes/admin';
-import { swaggerDocs } from './utils/swagger';
+import { FRONTEND_URL, NODE_ENV, PORT } from './config/constants';
+import swaggerSpec from './config/swagger';
 
 const app: Application = express();
 
@@ -46,18 +49,24 @@ app.use('/api', limiter);
 
 // Enable CORS
 const corsOptions = {
-  origin: FRONTEND_URL,
+  origin: FRONTEND_URL || ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
 
+// API Documentation
+if (NODE_ENV === 'development') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  console.log(`API documentation available at http://localhost:${PORT}/api-docs`);
+}
+
 // Mount routers
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/projects', projectRoutes);
+app.use('/api/v1/posts', postRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req: Request, res: Response) => {
@@ -70,7 +79,8 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 // Swagger documentation
 if (NODE_ENV === 'development') {
-  swaggerDocs(app);
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  console.log(`API documentation available at http://localhost:${PORT}/api-docs`);
 }
 
 // Handle 404
